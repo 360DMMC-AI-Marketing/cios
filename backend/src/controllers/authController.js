@@ -63,12 +63,15 @@ exports.register = async (req, res, next) => {
       role: 'admin', onboardingCompleted: false,
     });
 
-    const company = await Company.create({
-      name: name + "'s Company",
-      domain: bareDomain,
-      plan: validPlans.includes(plan) ? plan : 'starter',
-      createdBy: user._id,
-    });
+    const existingCompany = await Company.findOne({ domain: bareDomain });
+    if (!existingCompany) {
+      await Company.create({
+        name: name + "'s Company",
+        domain: bareDomain,
+        plan: validPlans.includes(plan) ? plan : 'starter',
+        createdBy: user._id,
+      });
+    }
 
     const token = generateToken(user);
     res.status(201).json({ token, user });

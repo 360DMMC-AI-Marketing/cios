@@ -12,7 +12,7 @@ export default function OnboardingGuide() {
     try {
       const res = await auth.updateProfile({ onboardingCompleted: true });
       updateUser(res.data);
-      setAcknowledged(true);
+      navigate('/dashboard');
     } catch (e) { console.error(e); }
   };
 
