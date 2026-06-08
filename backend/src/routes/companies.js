@@ -1,0 +1,12 @@
+const { Router } = require('express');
+const c = require('../controllers/companyController');
+const { auth, authorize } = require('../middleware/auth');
+const r = Router();
+r.use(auth);
+r.get('/', c.getCompanies);
+r.get('/:id', c.getCompanyById);
+r.post('/', authorize('admin'), c.createCompany);
+r.patch('/:id', authorize('admin'), c.updateCompany);
+r.patch('/:id/plan', authorize('admin'), c.updatePlan);
+r.post('/:id/import', authorize('admin'), c.importCompanyUsers);
+module.exports = r;

@@ -1,0 +1,14 @@
+const { Router } = require('express');
+const { getTasks, getTaskById, createTask, updateTask, deleteTask, addSubtask, updateSubtask, deleteSubtask } = require('../controllers/taskController');
+const { auth, authorize } = require('../middleware/auth');
+const router = Router();
+router.use(auth);
+router.get('/', getTasks);
+router.get('/:id', getTaskById);
+router.post('/', authorize('admin', 'project_manager', 'team_lead', 'manager', 'qa_tester'), createTask);
+router.patch('/:id', updateTask);
+router.delete('/:id', authorize('admin'), deleteTask);
+router.post('/:id/subtasks', authorize('admin', 'project_manager', 'team_lead'), addSubtask);
+router.patch('/:id/subtasks/:subtaskId', updateSubtask);
+router.delete('/:id/subtasks/:subtaskId', authorize('admin', 'project_manager', 'team_lead'), deleteSubtask);
+module.exports = router;

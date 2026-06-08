@@ -1,0 +1,16 @@
+const { Router } = require('express');
+const { getTestCases, getTestCaseById, createTestCase, updateTestCase, deleteTestCase, updateStepStatus, getProjectTestStats, bulkGenerate, addAttachment } = require('../controllers/testCaseController');
+const { auth, authorize } = require('../middleware/auth');
+const upload = require('../middleware/upload');
+const router = Router();
+router.use(auth);
+router.get('/', getTestCases);
+router.get('/stats/:projectId', getProjectTestStats);
+router.get('/:id', getTestCaseById);
+router.post('/', authorize('admin', 'project_manager', 'team_lead'), createTestCase);
+router.post('/bulk-generate', authorize('admin', 'project_manager', 'team_lead'), bulkGenerate);
+router.patch('/:id', authorize('admin', 'project_manager', 'team_lead', 'qa_tester'), updateTestCase);
+router.patch('/:id/step', authorize('admin', 'project_manager', 'team_lead', 'qa_tester'), updateStepStatus);
+router.post('/:id/attachments', authorize('admin', 'project_manager', 'team_lead', 'qa_tester'), upload.single('file'), addAttachment);
+router.delete('/:id', authorize('admin', 'project_manager', 'team_lead'), deleteTestCase);
+module.exports = router;

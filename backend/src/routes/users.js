@@ -1,0 +1,13 @@
+const { Router } = require('express');
+const { getUsers, getUserById, createUser, updateUser, deleteUser, getUserActivity, getUserProfile } = require('../controllers/userController');
+const { auth, authorize } = require('../middleware/auth');
+const router = Router();
+router.use(auth);
+router.get('/', getUsers);
+router.get('/:id/activity', getUserActivity);
+router.get('/:id/profile', getUserProfile);
+router.get('/:id', getUserById);
+router.post('/', authorize('admin'), createUser);
+router.patch('/:id', authorize('admin', 'project_manager', 'team_lead', 'manager'), updateUser);
+router.delete('/:id', authorize('admin'), deleteUser);
+module.exports = router;
