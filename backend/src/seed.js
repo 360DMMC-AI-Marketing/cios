@@ -48,11 +48,11 @@ async function seed() {
     await User.create({ name: 'Test User', email: 'test@demo.com', password: 'password123', role: 'admin', domain: 'test@demo.com' });
 
     const allUserIds = [admin._id, pm._id, dev._id, qa._id, intern._id, manager._id, designer._id, analyst._id, scrum._id];
-    const projectWeb = await Project.create({ name: 'Website Redesign', projectType: 'software', description: 'Redesign company website with modern stack', status: 'on_track', phase: 'review', progress: 65, deadline: new Date('2025-08-01'), members: allUserIds, domain: 'admin@cios.com' });
+    const projectWeb = await Project.create({ name: 'Website Redesign', projectType: 'software', description: 'Redesign company website with modern stack', status: 'on_track', phase: 'development', progress: 33, deadline: new Date('2025-08-01'), members: allUserIds, domain: 'admin@cios.com' });
     const projectMobile = await Project.create({ name: 'Mobile App v2', projectType: 'design', description: 'Version 2 of the mobile application', status: 'completed', phase: 'launched', progress: 100, deadline: new Date('2025-09-15'), members: allUserIds, domain: 'admin@cios.com' });
-    const projectApi = await Project.create({ name: 'API Gateway', projectType: 'business', description: 'Build unified API gateway for microservices', status: 'delayed', phase: 'testing', progress: 45, deadline: new Date('2025-06-01'), members: allUserIds, domain: 'admin@cios.com' });
-    const projectEcom = await Project.create({ name: 'E-commerce Platform', projectType: 'content', description: 'Full-stack e-commerce platform with payment integration', status: 'ready_to_test', phase: 'testing', progress: 82, deadline: new Date('2025-07-15'), members: allUserIds, domain: 'admin@cios.com' });
-    const projectDashboard = await Project.create({ name: 'Analytics Dashboard', projectType: 'research', description: 'Real-time analytics dashboard with charts and reporting', status: 'on_track', phase: 'development', progress: 55, deadline: new Date('2025-09-01'), members: allUserIds, domain: 'admin@cios.com' });
+    const projectApi = await Project.create({ name: 'API Gateway', projectType: 'business', description: 'Build unified API gateway for microservices', status: 'delayed', phase: 'business_growth', progress: 33, deadline: new Date('2025-06-01'), members: allUserIds, domain: 'admin@cios.com' });
+    const projectEcom = await Project.create({ name: 'E-commerce Platform', projectType: 'content', description: 'Full-stack e-commerce platform with payment integration', status: 'ready_to_test', phase: 'content_creation', progress: 40, deadline: new Date('2025-07-15'), members: allUserIds, domain: 'admin@cios.com' });
+    const projectDashboard = await Project.create({ name: 'Analytics Dashboard', projectType: 'research', description: 'Real-time analytics dashboard with charts and reporting', status: 'on_track', phase: 'research', progress: 25, deadline: new Date('2025-09-01'), members: allUserIds, domain: 'admin@cios.com' });
 
     // Create default team groups for each project
     const allProjects = [projectWeb, projectMobile, projectApi, projectEcom, projectDashboard];

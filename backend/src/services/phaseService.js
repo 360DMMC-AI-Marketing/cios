@@ -162,7 +162,8 @@ async function evaluateProjectPhase(projectId) {
       break;
   }
 
-  if (targetPhase !== project.phase) {
+  const targetIdx = PHASES.indexOf(targetPhase);
+  if (targetPhase !== project.phase && targetIdx > currentIdx) {
     await Project.findByIdAndUpdate(projectId, { phase: targetPhase }, { new: true });
     return targetPhase;
   }
