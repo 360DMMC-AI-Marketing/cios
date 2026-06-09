@@ -292,7 +292,6 @@ exports.getCompanyAnalytics = async (req, res, next) => {
       completedProjects, totalProjects, atRiskProjects,
     });
     const taskCompletionRateAll = allTasks.length > 0 ? Math.round((allTasks.filter(t => t.status === 'done').length / allTasks.length) * 100) : 0;
-    const overloadCount = allTasks.filter(t => t.assignee).length > 0 ? 0 : 0;
 
     res.json({
       company: {

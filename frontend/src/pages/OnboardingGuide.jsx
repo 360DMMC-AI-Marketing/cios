@@ -12,8 +12,8 @@ export default function OnboardingGuide() {
     try {
       const res = await auth.updateProfile({ onboardingCompleted: true });
       updateUser(res.data);
-      navigate('/dashboard');
     } catch (e) { console.error(e); }
+    navigate('/dashboard');
   };
 
   return (

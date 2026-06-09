@@ -209,7 +209,7 @@ export default function Admin() {
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{platformIcons[int.name] || '🔌'}</span>
                     <div>
-                      <p className="font-medium text-surface-900 text-sm">{platformLabels[int.name] || int.name.replace('_', ' ')}</p>
+                      <p className="font-medium text-surface-900 text-sm">{platformLabels[int.name] || (int.name || '').replace('_', ' ')}</p>
                       <p className="text-xs text-surface-400">
                         {int.isConnected ? `Last sync: ${int.lastSync ? new Date(int.lastSync).toLocaleString() : 'Never'}` : 'Not connected'}
                       </p>

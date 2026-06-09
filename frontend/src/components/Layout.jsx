@@ -47,6 +47,7 @@ export default function Layout() {
   const dismissOnboarding = () => {
     setShowOnboarding(false);
     auth.updateProfile({ onboardingCompleted: true }).catch(() => {});
+    navigate('/dashboard');
   };
 
   return (
