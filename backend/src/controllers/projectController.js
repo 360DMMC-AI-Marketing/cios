@@ -77,6 +77,8 @@ exports.updateProject = async (req, res, next) => {
 
 exports.evaluatePhase = async (req, res, next) => {
   try {
+    const { updateProjectProgress } = require('./taskController');
+    await updateProjectProgress(req.params.id);
     const phase = await evaluateProjectPhase(req.params.id);
     const project = await Project.findOne({ _id: req.params.id, domain: req.user.domain })
       .populate('members', 'name email avatar role activityScore status')
