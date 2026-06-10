@@ -364,6 +364,26 @@ async function generateTestsFromTasks(project, sprint, tasks, userId, domain) {
       metadata: { projectId: project, sprintId: sprint, count: created.length },
     });
     try {
+      const Project = require('../models/Project');
+      const Notification = require('../models/Notification');
+      const proj = await Project.findById(project).select('name members');
+      if (proj) {
+        const memberIds = (proj.members || []).filter(m => String(m) !== String(userId));
+        if (memberIds.length > 0) {
+          const notifDocs = memberIds.map(memberId => ({
+            user: memberId, domain,
+            type: 'status_change',
+            title: `New test cases generated`,
+            message: `${created.length} auto-generated test cases in "${proj.name}" — ready for assignment`,
+            link: `/projects/${project}`,
+          }));
+          const notifs = await Notification.insertMany(notifDocs);
+          try {
+            const io = getIO();
+            notifs.forEach(n => { if (io) io.to(`user:${n.user}`).emit('notification', n.toObject()); });
+          } catch (e) {}
+        }
+      }
       const io = getIO();
       if (io) io.to(`project:${project}`).emit('test_cases_auto_generated', created);
     } catch (e) {}
