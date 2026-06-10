@@ -68,7 +68,9 @@ exports.updateProject = async (req, res, next) => {
       { new: true, runValidators: true }
     );
     if (!project) return res.status(404).json({ message: 'Project not found' });
-    await evaluateProjectPhase(req.params.id);
+    if (!req.body.phase && !req.body.progress) {
+      await evaluateProjectPhase(req.params.id);
+    }
     res.json(project);
   } catch (error) {
     next(error);

@@ -375,6 +375,7 @@ export default function ProjectDetail() {
         general: {
           name: project.name, description: project.description,
           status: project.status, phase: settingsForm.manualPhase || project.phase,
+          progress: settingsForm.manualProgress !== undefined ? settingsForm.manualProgress : project.progress,
           deadline: project.deadline, clientName: settingsForm.clientName,
         },
         development: {
@@ -394,9 +395,9 @@ export default function ProjectDetail() {
       body.development.teamsChannel = settingsForm.teamsChannel || '';
       body.development.teamsTeamId = settingsForm.teamsTeamId || '';
       body.development.teamsChannelId = settingsForm.teamsChannelId || '';
-      const res = await projects.updateSettings(id, body);
-      const updatedProj = await projects.update(id, { techStack });
-      if (updatedProj.data) setProject(updatedProj.data);
+      await projects.updateSettings(id, body);
+      const refetch = await projects.getById(id);
+      if (refetch.data) setProject(refetch.data);
       setModalAlert({ title:'Success', message:'Settings saved!', type:'success' });
     } catch (e) { setModalAlert({ title:'Error', message:e.response?.data?.message || e.message, type:'error' }); }
     finally { setSaving(false); }
@@ -1399,6 +1400,19 @@ export default function ProjectDetail() {
                     <option key={p} value={p}>{p.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}</option>
                   ))}
                 </select>
+              </div>
+              )}
+              {canManage && (
+              <div className="s-field">
+                <label className="s-label">Progress</label>
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  <input type="range" min="0" max="100" className="s-input" style={{flex:1,padding:0,accentColor:'#2347e8'}}
+                    value={settingsForm.manualProgress !== undefined ? settingsForm.manualProgress : project.progress || 0}
+                    onChange={e => setSettingsForm({...settingsForm, manualProgress: Number(e.target.value)})} />
+                  <span style={{fontSize:11,fontWeight:600,color:'#111827',minWidth:28,textAlign:'right'}}>
+                    {settingsForm.manualProgress !== undefined ? settingsForm.manualProgress : project.progress || 0}%
+                  </span>
+                </div>
               </div>
               )}
               <div className="s-field" style={{gridColumn:'1/-1'}}>
