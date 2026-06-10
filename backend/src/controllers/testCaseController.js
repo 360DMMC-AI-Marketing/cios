@@ -490,10 +490,9 @@ exports.generateForCompletedSprints = async (req, res, next) => {
     const sprints = await Sprint.find({ status: 'completed', ...projectFilter }).populate('tasks');
 
     const Counter = require('../models/Counter');
-    const mongoose = require('mongoose');
     const projectSet = [...new Set(sprints.map(s => s.project.toString()))];
     for (const projectId of projectSet) {
-      const lastTc = await TestCase.findOne({ project: new mongoose.Types.ObjectId(projectId), isActive: true, testCaseId: { $regex: /^TC-/ } })
+      const lastTc = await TestCase.findOne({ project: projectId, testCaseId: { $regex: /^TC-/ } })
         .sort({ testCaseId: -1 })
         .select('testCaseId')
         .lean();
