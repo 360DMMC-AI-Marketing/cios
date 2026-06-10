@@ -40,6 +40,23 @@ app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
+app.post('/api/seed-demo', async (req, res) => {
+  try {
+    const User = require('./models/User');
+    const exists = await User.countDocuments({ email: 'admin@cios.com' });
+    if (exists > 0) return res.json({ message: 'Demo users already exist' });
+    const usersData = [
+      { name: 'Admin User', email: 'admin@cios.com', password: 'password123', role: 'admin', domain: 'admin@cios.com' },
+      { name: 'Project Manager', email: 'pm@cios.com', password: 'password123', role: 'project_manager', domain: 'admin@cios.com' },
+      { name: 'Developer User', email: 'dev@cios.com', password: 'password123', role: 'developer', domain: 'admin@cios.com' },
+      { name: 'QA Tester', email: 'qa@cios.com', password: 'password123', role: 'qa_tester', domain: 'admin@cios.com' },
+      { name: 'Intern User', email: 'intern@cios.com', password: 'password123', role: 'intern', domain: 'admin@cios.com' },
+    ];
+    for (const d of usersData) await User.create(d);
+    res.json({ message: `Created ${usersData.length} demo users` });
+  } catch (e) { res.status(500).json({ message: e.message }); }
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
