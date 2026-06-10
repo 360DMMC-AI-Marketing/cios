@@ -308,7 +308,18 @@ cron.schedule('0 3 * * *', () => { runAutoDelete().catch(console.error); });
 console.log('CIOS backend starting...');
 
 const PORT = env.PORT;
-connectDB().then(() => {
+connectDB().then(async () => {
+  try {
+    const db = require('mongoose').connection.db;
+    const indexes = await db.collection('testcases').indexes();
+    const oldIdx = indexes.find(i => i.key?.project && i.key?.testCaseId && i.unique);
+    if (oldIdx) {
+      await db.collection('testcases').dropIndex('testCaseId_1');
+      console.log('Dropped old unique index testCaseId_1');
+    }
+  } catch (e) {
+    if (e.code !== 27) console.warn('Index cleanup:', e.message);
+  }
   server.listen(PORT, () => { console.log(`CIOS backend running on port ${PORT}`); });
 });
 

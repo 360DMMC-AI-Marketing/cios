@@ -59,7 +59,7 @@ async function evaluateProjectPhase(projectId) {
   if (!AUTO_PHASES.has(project.phase)) return;
 
   const sprints = await Sprint.find({ project: projectId });
-  const tasks = await Task.find({ project: projectId, isActive: true });
+  const tasks = await Task.find({ project: projectId, isActive: true, scope: 'project' });
   const testingItems = await TestingItem.find({ project: projectId, isActive: true });
   const testCases = await TestCase.find({ project: projectId, isActive: true });
 
