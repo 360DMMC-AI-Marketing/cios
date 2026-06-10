@@ -61,8 +61,13 @@ const testCaseSchema = new mongoose.Schema({
 
 testCaseSchema.pre('save', async function (next) {
   if (!this.testCaseId) {
-    const count = await mongoose.model('TestCase').countDocuments({ project: this.project });
-    this.testCaseId = `TC-${String(count + 1).padStart(3, '0')}`;
+    const Counter = mongoose.model('Counter');
+    const counter = await Counter.findOneAndUpdate(
+      { model: 'TestCase', field: 'testCaseId', reference: this.project },
+      { $inc: { count: 1 } },
+      { new: true, upsert: true },
+    );
+    this.testCaseId = `TC-${String(counter.count).padStart(3, '0')}`;
   }
   next();
 });

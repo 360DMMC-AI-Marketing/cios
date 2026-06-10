@@ -488,6 +488,20 @@ exports.generateForCompletedSprints = async (req, res, next) => {
     const projectIds = await getDomainProjectIds(req.user.domain);
     const projectFilter = req.query.projectId ? { project: req.query.projectId } : { project: { $in: projectIds } };
     const sprints = await Sprint.find({ status: 'completed', ...projectFilter }).populate('tasks');
+
+    const Counter = require('../models/Counter');
+    const projectSet = [...new Set(sprints.map(s => s.project.toString()))];
+    for (const projectId of projectSet) {
+      const existingCount = await TestCase.countDocuments({ project: projectId, isActive: true });
+      if (existingCount > 0) {
+        await Counter.findOneAndUpdate(
+          { model: 'TestCase', field: 'testCaseId', reference: projectId },
+          { $max: { count: existingCount } },
+          { upsert: true },
+        );
+      }
+    }
+
     let totalCreated = 0;
     for (const sprint of sprints) {
       const created = await generateTestsFromTasks(sprint.project, sprint._id, null, req.user._id, req.user.domain);

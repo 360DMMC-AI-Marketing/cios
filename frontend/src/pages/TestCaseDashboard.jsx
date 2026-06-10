@@ -66,6 +66,8 @@ export default function TestCaseDashboard() {
   const [editStatus, setEditStatus] = useState('');
   const [editAssignee, setEditAssignee] = useState('');
   const [qaMembers, setQaMembers] = useState([]);
+  const [showNewForm, setShowNewForm] = useState(false);
+  const [newForm, setNewForm] = useState({ title: '', description: '', type: 'manual', priority: 'medium' });
 
   useEffect(() => {
     projects.getAll().then(res => setProjectList(res.data)).catch(() => {});
@@ -130,6 +132,19 @@ export default function TestCaseDashboard() {
       socket.off('test_cases_auto_generated', refresh);
     };
   }, [socket, selectedProject]);
+
+  const handleNewTest = async () => {
+    if (!newForm.title.trim()) return toast.error('Title is required');
+    try {
+      await testCases.create({ ...newForm, project: selectedProject });
+      toast.success('Test case created');
+      setShowNewForm(false);
+      setNewForm({ title: '', description: '', type: 'manual', priority: 'medium' });
+      fetchData();
+    } catch (e) {
+      toast.error(e.response?.data?.message || 'Failed to create test case');
+    }
+  };
 
   const handleGenerateTests = async () => {
     if (!selectedProject) return toast.error('Select a project first');
@@ -343,6 +358,46 @@ export default function TestCaseDashboard() {
         </div>
       )}
 
+      {showNewForm && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.45)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:10000}} onClick={() => { setShowNewForm(false); setNewForm({ title: '', description: '', type: 'manual', priority: 'medium' }); }}>
+          <div className="card" style={{padding:20,maxWidth:420,width:'90%'}} onClick={e => e.stopPropagation()}>
+            <h3 style={{fontSize:13,fontWeight:700,color:'#111827',margin:'0 0 14px'}}>+ New Test Case</h3>
+            <div style={{display:'flex',flexDirection:'column',gap:10}}>
+              <div>
+                <label style={{fontSize:10,fontWeight:500,color:'#6b7280',display:'block',marginBottom:3}}>Title *</label>
+                <input className="finput" style={{width:'100%'}} value={newForm.title}
+                  onChange={e => setNewForm({...newForm, title: e.target.value})} placeholder="Test case title" />
+              </div>
+              <div>
+                <label style={{fontSize:10,fontWeight:500,color:'#6b7280',display:'block',marginBottom:3}}>Description</label>
+                <textarea className="finput" style={{width:'100%',resize:'vertical',minHeight:50}} value={newForm.description}
+                  onChange={e => setNewForm({...newForm, description: e.target.value})} placeholder="Optional description" />
+              </div>
+              <div style={{display:'flex',gap:10}}>
+                <div style={{flex:1}}>
+                  <label style={{fontSize:10,fontWeight:500,color:'#6b7280',display:'block',marginBottom:3}}>Type</label>
+                  <select value={newForm.type} onChange={e => setNewForm({...newForm, type: e.target.value})}
+                    style={{width:'100%',padding:'6px 8px',border:'0.5px solid #e5e7eb',borderRadius:6,fontSize:11,background:'#f9fafb',outline:'none'}}>
+                    {['manual','integration','unit','e2e','security','performance'].map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+                <div style={{flex:1}}>
+                  <label style={{fontSize:10,fontWeight:500,color:'#6b7280',display:'block',marginBottom:3}}>Priority</label>
+                  <select value={newForm.priority} onChange={e => setNewForm({...newForm, priority: e.target.value})}
+                    style={{width:'100%',padding:'6px 8px',border:'0.5px solid #e5e7eb',borderRadius:6,fontSize:11,background:'#f9fafb',outline:'none'}}>
+                    {['low','medium','high','urgent','critical'].map(p => <option key={p} value={p}>{p}</option>)}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div style={{display:'flex',gap:6,justifyContent:'flex-end',marginTop:14}}>
+              <button className="btn btn-gray" onClick={() => { setShowNewForm(false); setNewForm({ title: '', description: '', type: 'manual', priority: 'medium' }); }}>Cancel</button>
+              <button className="btn btn-green" onClick={handleNewTest}>+ Create</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {editTest && (
         <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.45)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:10000}} onClick={() => setEditTest(null)}>
           <div className="card" style={{padding:20,maxWidth:400,width:'90%'}} onClick={e => e.stopPropagation()}>
@@ -385,6 +440,7 @@ export default function TestCaseDashboard() {
         <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
           <div style={{fontSize:12,fontWeight:600,color:'#111827'}}>All Test Cases ({testList.length})</div>
           <div style={{display:'flex',gap:6}}>
+            {canEdit && <button className="btn btn-green" onClick={() => setShowNewForm(true)} style={{fontSize:10}}>+ New Test Case</button>}
             {canEdit && <button className="btn btn-blue" onClick={handleGenerateTests} style={{fontSize:10}}>🤖 Generate from Tasks</button>}
             {canEdit && <button className="btn btn-amber" onClick={handleGenerateCompleted} style={{fontSize:10}}>📦 From Completed Sprints</button>}
           </div>

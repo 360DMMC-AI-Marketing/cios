@@ -14,6 +14,7 @@ const Resource = require('./models/Resource');
 const ProjectMember = require('./models/ProjectMember');
 const Company = require('./models/Company');
 const TeamGroup = require('./models/TeamGroup');
+const Counter = require('./models/Counter');
 const { DEFAULT_GROUPS } = TeamGroup;
 
 async function seed() {
@@ -32,6 +33,7 @@ async function seed() {
       ProjectMember.deleteMany({}),
       Company.deleteMany({}),
       TeamGroup.deleteMany({}),
+      Counter.deleteMany({}),
     ]);
 
     await Company.create({ name: "Admin's Company", domain: 'admin@cios.com', plan: 'enterprise' });
@@ -124,6 +126,11 @@ async function seed() {
     const dashTasks = tasks.slice(13).map(t => t._id);
 
     await Sprint.create([
+      { name: 'MVP Launch — Homepage', project: projectWeb._id, startDate: new Date(today - 60*86400000), endDate: new Date(today - 30*86400000), status: 'completed', goal: 'Launch the initial homepage with core sections', tasks: webTasks.slice(0, 1), createdBy: pm._id },
+      { name: 'MVP — Auth', project: projectMobile._id, startDate: new Date(today - 50*86400000), endDate: new Date(today - 20*86400000), status: 'completed', goal: 'Complete authentication flow for mobile', tasks: mobileTasks.slice(0, 1), createdBy: pm._id },
+      { name: 'Sprint 0 — API Foundation', project: projectApi._id, startDate: new Date(today - 45*86400000), endDate: new Date(today - 15*86400000), status: 'completed', goal: 'Set up API foundation with rate limiting', tasks: apiTasks.slice(0, 1), createdBy: pm._id },
+      { name: 'Sprint 0 — Payment Core', project: projectEcom._id, startDate: new Date(today - 40*86400000), endDate: new Date(today - 10*86400000), status: 'completed', goal: 'Integrate payment gateway and product catalog', tasks: ecomTasks.slice(0, 2), createdBy: pm._id },
+      { name: 'Sprint 0 — Data Pipeline', project: projectDashboard._id, startDate: new Date(today - 35*86400000), endDate: new Date(today - 5*86400000), status: 'completed', goal: 'Build initial data pipeline for dashboard', tasks: dashTasks.slice(0, 1), createdBy: pm._id },
       { name: 'Sprint 1 — Homepage', project: projectWeb._id, startDate: new Date(today - 14*86400000), endDate: new Date(today + 14*86400000), status: 'active', goal: 'Complete homepage redesign with responsive navbar and CI/CD pipeline', tasks: webTasks, createdBy: pm._id },
       { name: 'Sprint 2 — Auth & Notifications', project: projectMobile._id, startDate: new Date(today - 7*86400000), endDate: new Date(today + 21*86400000), status: 'active', goal: 'Implement user authentication flow and push notification service', tasks: mobileTasks, createdBy: pm._id },
       { name: 'Sprint 3 — API Core', project: projectApi._id, startDate: new Date(today - 21*86400000), endDate: new Date(today + 7*86400000), status: 'active', goal: 'Finalize API rate limiting, documentation, and database migration script', tasks: apiTasks, createdBy: pm._id },
