@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "cross-env VITE_API_URL=https://cios-api-lqmf.onrender.com/api vite build && copy vercel.json dist\\vercel.json",
+    "build": "cross-env VITE_API_URL=https://cios-api-lqmf.onrender.com/api vite build && node -e \"require('fs').copyFileSync('vercel.json','dist/vercel.json')\"",
     "preview": "vite preview"
   },
   "dependencies": {
