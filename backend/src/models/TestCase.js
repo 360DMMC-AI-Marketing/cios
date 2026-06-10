@@ -61,25 +61,22 @@ const testCaseSchema = new mongoose.Schema({
 
 testCaseSchema.pre('save', async function (next) {
   if (!this.testCaseId) {
-    const Counter = mongoose.model('Counter');
     const TestCase = mongoose.model('TestCase');
-    let attempts = 0;
-    while (attempts < 100) {
-      const counter = await Counter.findOneAndUpdate(
-        { model: 'TestCase', field: 'testCaseId', reference: this.project },
-        { $inc: { count: 1 } },
-        { new: true, upsert: true },
-      );
-      this.testCaseId = `TC-${String(counter.count).padStart(3, '0')}`;
-      const exists = await TestCase.findOne({ project: this.project, testCaseId: this.testCaseId }).lean();
-      if (!exists) break;
-      attempts++;
+    const last = await TestCase.findOne({ project: this.project })
+      .sort({ testCaseId: -1 })
+      .select('testCaseId')
+      .lean();
+    let num = 1;
+    if (last && last.testCaseId) {
+      const parsed = parseInt(last.testCaseId.replace('TC-', ''), 10);
+      if (!isNaN(parsed)) num = parsed + 1;
     }
+    this.testCaseId = `TC-${String(num).padStart(3, '0')}`;
   }
   next();
 });
 
 testCaseSchema.index({ project: 1, status: 1 });
-testCaseSchema.index({ project: 1, testCaseId: 1 }, { unique: true });
+testCaseSchema.index({ project: 1, testCaseId: 1 });
 
 module.exports = mongoose.model('TestCase', testCaseSchema);
