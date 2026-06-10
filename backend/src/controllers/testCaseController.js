@@ -490,15 +490,22 @@ exports.generateForCompletedSprints = async (req, res, next) => {
     const sprints = await Sprint.find({ status: 'completed', ...projectFilter }).populate('tasks');
 
     const Counter = require('../models/Counter');
+    const mongoose = require('mongoose');
     const projectSet = [...new Set(sprints.map(s => s.project.toString()))];
     for (const projectId of projectSet) {
-      const existingCount = await TestCase.countDocuments({ project: projectId, isActive: true });
-      if (existingCount > 0) {
-        await Counter.findOneAndUpdate(
-          { model: 'TestCase', field: 'testCaseId', reference: projectId },
-          { $max: { count: existingCount } },
-          { upsert: true },
-        );
+      const lastTc = await TestCase.findOne({ project: new mongoose.Types.ObjectId(projectId), isActive: true, testCaseId: { $regex: /^TC-/ } })
+        .sort({ testCaseId: -1 })
+        .select('testCaseId')
+        .lean();
+      if (lastTc && lastTc.testCaseId) {
+        const num = parseInt(lastTc.testCaseId.replace('TC-', ''), 10);
+        if (!isNaN(num) && num > 0) {
+          await Counter.findOneAndUpdate(
+            { model: 'TestCase', field: 'testCaseId', reference: projectId },
+            { $max: { count: num } },
+            { upsert: true },
+          );
+        }
       }
     }
 
