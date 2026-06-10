@@ -312,10 +312,13 @@ connectDB().then(async () => {
   try {
     const db = require('mongoose').connection.db;
     const indexes = await db.collection('testcases').indexes();
-    const oldIdx = indexes.find(i => i.key?.project && i.key?.testCaseId && i.unique);
-    if (oldIdx) {
-      await db.collection('testcases').dropIndex('testCaseId_1');
-      console.log('Dropped old unique index testCaseId_1');
+    for (const idx of indexes) {
+      if (idx.unique && idx.key?.testCaseId) {
+        if (Object.keys(idx.key).length === 1) {
+          await db.collection('testcases').dropIndex(idx.name);
+          console.log(`Dropped global unique index ${idx.name} on testCaseId`);
+        }
+      }
     }
   } catch (e) {
     if (e.code !== 27) console.warn('Index cleanup:', e.message);
