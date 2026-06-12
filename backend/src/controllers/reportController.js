@@ -265,22 +265,19 @@ exports.generateReport = async (req, res) => {
       return res.status(400).json({ error: 'Type must be "admin" or "client"' });
     }
     const data = await buildReportData(req.params.id, type);
-    const existing = await Report.findOne({ project: req.params.id, type });
-    let report;
-    if (existing) {
-      existing.data = data;
-      existing.generatedBy = req.user._id;
-      existing.generatedAt = new Date();
-      report = await existing.save();
-    } else {
-      report = await Report.create({
-        project: req.params.id,
-        type,
-        data,
-        generatedBy: req.user._id,
-      });
-    }
-    res.status(existing ? 200 : 201).json(report);
+    const report = await Report.findOneAndUpdate(
+      { project: req.params.id, type },
+      {
+        $set: {
+          data,
+          generatedBy: req.user._id,
+          generatedAt: new Date(),
+        },
+        $setOnInsert: { downloadCount: 0 },
+      },
+      { upsert: true, new: true }
+    );
+    res.status(200).json(report);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
