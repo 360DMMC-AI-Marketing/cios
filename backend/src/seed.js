@@ -38,17 +38,20 @@ async function seed() {
 
     await Company.create({ name: "Admin's Company", domain: 'admin@cios.com', plan: 'enterprise' });
 
-    const admin = await User.create({ name: 'Admin User', email: 'admin@cios.com', password: 'password123', role: 'admin', domain: 'admin@cios.com' });
-    const pm = await User.create({ name: 'Project Manager', email: 'pm@cios.com', password: 'password123', role: 'project_manager', domain: 'admin@cios.com' });
-    const dev = await User.create({ name: 'Developer User', email: 'dev@cios.com', password: 'password123', role: 'developer', domain: 'admin@cios.com' });
-    const qa = await User.create({ name: 'QA Tester', email: 'qa@cios.com', password: 'password123', role: 'qa_tester', domain: 'admin@cios.com' });
-    const intern = await User.create({ name: 'Intern User', email: 'intern@cios.com', password: 'password123', role: 'intern', domain: 'admin@cios.com' });
-    const manager = await User.create({ name: 'Team Lead', email: 'manager@cios.com', password: 'password123', role: 'manager', domain: 'admin@cios.com' });
-    const designer = await User.create({ name: 'UI/UX Designer', email: 'designer@cios.com', password: 'password123', role: 'developer', domain: 'admin@cios.com' });
-    const analyst = await User.create({ name: 'Business Analyst', email: 'analyst@cios.com', password: 'password123', role: 'manager', domain: 'admin@cios.com' });
-    const scrum = await User.create({ name: 'Scrum Master', email: 'scrum@cios.com', password: 'password123', role: 'team_lead', domain: 'admin@cios.com' });
-    await User.create({ name: 'Test User', email: 'test@demo.com', password: 'password123', role: 'admin', domain: 'admin@cios.com' });
-    await User.create({ name: 'Demo User', email: 'demo@demo.com', password: 'demo1234', role: 'admin', domain: 'admin@cios.com' });
+    const allUsers = await User.create([
+      { name: 'Sarah Chen', email: 'admin@cios.com', password: 'password123', role: 'admin', domain: 'admin@cios.com', status: 'active', activityScore: 92, isActive: true, githubUsername: 'sarahchen', clickupId: 'sarah-c', teamsId: 'sarah.chen', outlookEmail: 'sarah@company.com', figmaUsername: 'sarahchen', lastActive: new Date() },
+      { name: 'James Wilson', email: 'pm@cios.com', password: 'password123', role: 'project_manager', domain: 'admin@cios.com', status: 'in_meeting', activityScore: 85, isActive: true, githubUsername: 'jwilson', clickupId: 'james-w', teamsId: 'james.wilson', outlookEmail: 'james@company.com', lastActive: new Date(Date.now() - 3600000) },
+      { name: 'Marcus Johnson', email: 'dev@cios.com', password: 'password123', role: 'developer', domain: 'admin@cios.com', status: 'active', activityScore: 78, isActive: true, githubUsername: 'marcusj', clickupId: 'marcus-j', teamsId: 'marcus.johnson', outlookEmail: 'marcus@company.com', figmaUsername: 'marcusj', lastActive: new Date(Date.now() - 1800000) },
+      { name: 'Aisha Patel', email: 'qa@cios.com', password: 'password123', role: 'qa_tester', domain: 'admin@cios.com', status: 'active', activityScore: 88, isActive: true, githubUsername: 'aishapatel', clickupId: 'aisha-p', teamsId: 'aisha.patel', outlookEmail: 'aisha@company.com', lastActive: new Date(Date.now() - 900000) },
+      { name: 'Ryan Kim', email: 'intern@cios.com', password: 'password123', role: 'intern', domain: 'admin@cios.com', status: 'idle', activityScore: 45, isActive: true, githubUsername: 'ryankim', clickupId: 'ryan-k', teamsId: 'ryan.kim', outlookEmail: 'ryan@company.com', lastActive: new Date(Date.now() - 7200000) },
+      { name: 'Emily Rodriguez', email: 'manager@cios.com', password: 'password123', role: 'manager', domain: 'admin@cios.com', status: 'active', activityScore: 90, isActive: true, githubUsername: 'emilyr', clickupId: 'emily-r', teamsId: 'emily.rodriguez', outlookEmail: 'emily@company.com', lastActive: new Date(Date.now() - 2700000) },
+      { name: 'Olivia Tanaka', email: 'designer@cios.com', password: 'password123', role: 'developer', domain: 'admin@cios.com', status: 'inactive', activityScore: 72, isActive: true, githubUsername: 'oliviatanaka', clickupId: 'olivia-t', teamsId: 'olivia.tanaka', outlookEmail: 'olivia@company.com', figmaUsername: 'oliviatanaka', lovableUsername: 'olivia_t', lastActive: new Date(Date.now() - 86400000) },
+      { name: 'David Mohammed', email: 'analyst@cios.com', password: 'password123', role: 'manager', domain: 'admin@cios.com', status: 'in_meeting', activityScore: 68, isActive: true, githubUsername: 'dmohammed', clickupId: 'david-m', teamsId: 'david.mohammed', outlookEmail: 'david@company.com', lastActive: new Date(Date.now() - 5400000) },
+      { name: 'Lisa Thompson', email: 'scrum@cios.com', password: 'password123', role: 'team_lead', domain: 'admin@cios.com', status: 'active', activityScore: 82, isActive: true, githubUsername: 'lthompson', clickupId: 'lisa-t', teamsId: 'lisa.thompson', outlookEmail: 'lisa@company.com', lastActive: new Date(Date.now() - 3600000) },
+      { name: 'Alex Rivera', email: 'test@demo.com', password: 'password123', role: 'admin', domain: 'admin@cios.com', status: 'offline', activityScore: 15, isActive: true, lastActive: new Date(Date.now() - 172800000) },
+      { name: 'Demo User', email: 'demo@demo.com', password: 'demo1234', role: 'admin', domain: 'admin@cios.com', status: 'active', activityScore: 95, isActive: true, githubUsername: 'demouser', clickupId: 'demo-user', teamsId: 'demo.user', outlookEmail: 'demo@company.com', lastActive: new Date() },
+    ]);
+    const [admin, pm, dev, qa, intern, manager, designer, analyst, scrum] = allUsers;
 
     const allUserIds = [admin._id, pm._id, dev._id, qa._id, intern._id, manager._id, designer._id, analyst._id, scrum._id];
     const projectWeb = await Project.create({ name: 'Website Redesign', projectType: 'software', description: 'Redesign company website with modern stack', status: 'on_track', phase: 'development', progress: 33, deadline: new Date('2025-08-01'), members: allUserIds, domain: 'admin@cios.com' });
