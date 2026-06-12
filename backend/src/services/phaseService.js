@@ -94,7 +94,7 @@ async function evaluateProjectPhase(projectId) {
   // Type-specific evaluation
   switch (type) {
     case 'software':
-      if (testingReady) {
+      if (allTasksDone && noCriticalTasksRemain && testingReady) {
         targetPhase = 'review';
       } else if (allTasksDone && noCriticalTasksRemain) {
         targetPhase = 'testing';
